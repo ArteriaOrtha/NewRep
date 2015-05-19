@@ -1,0 +1,204 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Все_все_с_массивами
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            int size=2; //array size
+            int str = 0, num=1; // строка в массиве которую  нужно отсортировать или сместить и число на сколько сместить
+            int min, exi, exj, ex;
+            
+            
+            //задание первое - найти мин на углах и поменять соотв строки
+            link1:
+            try
+            {             
+                Console.Write("Введите размерность массива: ");
+                size = Convert.ToInt16(Console.ReadLine());
+                if (size < 2) throw new IndexOutOfRangeException();
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.Clear();
+                Console.WriteLine("Размер массива не должен быть меньше 2 ");
+                goto link1;
+            }
+
+            int[,] arr1 = new int[size,size];
+            int[] arr2 = new int[size];
+
+            
+            Random rand = new Random();
+           
+              
+                
+            for (int i = 0; i < size; i++)
+            {
+                 Console.WriteLine("\n");
+                 for (int j = 0; j < size; j++)
+                 {
+                      arr1[i, j] = rand.Next( 10);
+                      Console.Write("{0}\t", arr1[i, j]);
+                 }
+            }
+            
+         
+          
+
+            if (arr1[0, 0] < arr1[0, size - 1])
+            {
+                min = arr1[0, 0];
+                exi = exj = 0;
+            }
+            else 
+            {
+                min = arr1[0, size - 1];
+                exi = 0;
+                exj = size - 1;
+            }
+
+            if (arr1[size - 1, 0] < min)
+            {
+                min = arr1[size - 1, 0];
+                exi = size - 1;
+                exj = 0;
+            }
+
+            if (arr1[size - 1, size - 1] < min)
+            {
+                min = arr1[size - 1, size - 1];
+                exi = size - 1;
+                exj = size - 1;
+            }
+
+            Console.WriteLine("\n\nМинимальный элемент равен {0} и находится на позиции [{1},{2}]",min,exi,exj);
+
+            if ((exi == 0 && exj == 0) | (exi > 0 && exj > 0))
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    ex=arr1[i,exj];
+                    arr1[i, exj] = arr1[exi, i];
+                    arr1[exi, i] = ex;
+                }
+            }
+
+            if ((exi == 0 && exj >0) | (exi > 0 && exj == 0))
+            {
+                
+                for (int i = 0; i < size; i++)
+                {
+                    ex = arr1[i, exj];
+                    arr1[i, exj] = arr1[exi, size-1-i];
+                    arr1[exi, size-1-i] = ex;
+                }
+            }
+
+            Console.WriteLine("\n\nИзмененный массив:\n");
+            for (int i = 0; i < size; i++)
+            {
+                Console.WriteLine("\n");
+                for (int j = 0; j < size; j++)
+                {
+                    Console.Write("{0}\t", arr1[i, j]);
+                }
+            }
+
+            //Задание второе, отсортировать выбранную строку и сдвинуть на n
+
+            Console.WriteLine("_________________________________________________________");
+
+            Console.Write("\n\nВведите номер строки которую надо отсортировать:");
+            str=int.Parse(Console.ReadLine());
+            Console.Write("\n\nНа сколько позиций ее надо сместить влево:");
+            num = int.Parse(Console.ReadLine());
+
+            for (int j = 0; j < size; j++)
+            {
+                arr2[j]=arr1[str-1,j];
+            }
+
+            Array.Sort(arr2);
+
+            for (int i = 1; i <= num; i++)
+            {
+                ex = arr2[0];
+                for (int j = 0; j < size-1; j++)
+                {
+                    arr2[j] = arr2[j + 1];
+                }
+                arr2[size - 1] = ex;
+            }
+
+            for (int j = 0; j < size; j++)
+            {
+                arr1[str-1, j]=arr2[j];
+            }
+
+
+            Console.WriteLine("\n\nМассив с отсортированной и смещенной {0} строкой:\n",str);
+            for (int i = 0; i < size; i++)
+            {
+                Console.WriteLine("\n");
+                for (int j = 0; j < size; j++)
+                {
+                    Console.Write("{0}\t", arr1[i, j]);
+                }
+            }
+
+            Console.WriteLine("\n\n______________________________________");
+            //задание третье - найти мин по всей матрице. Если он отриц, то заменить им все выше глав диагонали. Иначе обунлить соотв строку и столбец.
+            min=100;
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    if (arr1[i, j] <= min)
+                    {
+                        min = arr1[i, j];
+                        exi = i;
+                        exj = j;
+                    }
+                }
+            }
+            Console.WriteLine("\n\nПоследний минимальный элемент по всему массиву равен {0} и находится на позации [{1},{2}]",min,exi,exj);
+
+            if (min < 0)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    arr1[exi, i] = 0;
+                    arr1[i, exj] = 0;
+                }
+            }
+            else
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        if (j > i) arr1[i, j] = min;
+                           
+                    }
+                }
+
+
+            Console.WriteLine("\n\nМассив измененный в соответствии с условием:");
+            for (int i = 0; i < size; i++)
+            {
+                Console.WriteLine("\n");
+                for (int j = 0; j < size; j++)
+                {
+                    Console.Write("{0}\t", arr1[i, j]);
+                }
+            }
+                Console.ReadKey();
+        }
+    }
+}
